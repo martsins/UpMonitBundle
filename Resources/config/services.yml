@@ -1,6 +1,4 @@
 services:
-    martsins_up_monit.data_collector:
-        class: Martsins\UpMonitBundle\DataCollector
-        arguments: [@kernel]
-    tags:
-        - { name: data_collector }
+    up_monit.data_collector:
+        class: Martsins\UpMonitBundle\DataCollector\UpMonitDataCollector
+        arguments: ["@kernel"]

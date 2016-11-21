@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Loader;
  *
  * @link http://symfony.com/doc/current/cookbook/bundles/extension.html
  */
-class MartsinsUpMonitExtension extends Extension
+class UpMonitExtension extends Extension
 {
     /**
      * {@inheritdoc}
@@ -25,8 +25,8 @@ class MartsinsUpMonitExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
-        $container->setParameter('martsins_up_monit.token', $config['token']);
-        $container->setParameter('martsins_up_monit.project_id', $config['project_id']);
-        $container->setParameter('martsins_up_monit.url', $config['url']);
+        $container->setParameter('up_monit.token', $config['token']);
+        $container->setParameter('up_monit.project_id', $config['project_id']);
+        $container->setParameter('up_monit.url', $config['url']);
     }
 }

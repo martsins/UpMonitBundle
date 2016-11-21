@@ -4,6 +4,6 @@ namespace Martsins\UpMonitBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class MartsinsUpMonitBundle extends Bundle
+class UpMonitBundle extends Bundle
 {
 }
