@@ -1,4 +1,4 @@
 services:
     up_monit.data_collector:
         class: Martsins\UpMonitBundle\DataCollector\UpMonitDataCollector
-        arguments: ["@kernel"]
+        arguments: ["@kernel", "@sensio_distribution.security_checker"]
