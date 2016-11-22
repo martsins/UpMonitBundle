@@ -41,19 +41,26 @@ class Version extends Semver
     public static function latest(array $versions)
     {
         // Normalize version numbers.
-        $versions = array_map(function ($version) {
-            return static::normalize($version);
-        }, $versions);
+        $versions = array_map(
+          function ($version) {
+              return static::normalize($version);
+          },
+          $versions
+        );
 
         // Get the highest version number.
-        $latest = array_reduce($versions, function ($carry, $item) {
-            // Skip unstable versions.
-            if (VersionParser::parseStability($item) !== 'stable') {
-                return $carry;
-            }
+        $latest = array_reduce(
+          $versions,
+          function ($carry, $item) {
+              // Skip unstable versions.
+              if (VersionParser::parseStability($item) !== 'stable') {
+                  return $carry;
+              }
 
-            return Comparator::greaterThan($carry, $item) ? $carry : $item;
-        }, '0.0.0');
+              return Comparator::greaterThan($carry, $item) ? $carry : $item;
+          },
+          '0.0.0'
+        );
 
         return $latest;
     }

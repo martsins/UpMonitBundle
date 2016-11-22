@@ -2,6 +2,7 @@
 
 namespace Martsins\UpMonitBundle\Command;
 
+use Guzzle\Http\Exception\ClientErrorResponseException;
 use Martsins\UpMonitBundle\DataCollector\UpMonitDataCollector;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -19,16 +20,21 @@ class UpMonitStatusCommand extends ContainerAwareCommand
         $this
           // the name of the command (the part after "bin/console")
           ->setName('upmonit:check-status')
-          ->setDefinition(array(
-            new InputArgument('lockfile', InputArgument::OPTIONAL, 'The path to the composer.lock file', 'composer.lock'),
-          ))
+          ->setDefinition(
+            [
+              new InputArgument(
+                'lockfile',
+                InputArgument::OPTIONAL,
+                'The path to the composer.lock file',
+                'composer.lock'
+              ),
+            ]
+          )
           // the short description shown while running "php bin/console list"
           ->setDescription('Send data.')
-
           // the full command description shown when running the command with
           // the "--help" option
-          ->setHelp("...")
-        ;
+          ->setHelp("...");
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -44,16 +50,28 @@ class UpMonitStatusCommand extends ContainerAwareCommand
         $packages = $collection->getData();
         if (isset($packages['data']) && !empty($packages['data'])) {
             $token = $this->getContainer()->getParameter('up_monit.token');
-            $project_id = $this->getContainer()->getParameter('up_monit.project_id');
+            $project_id = $this->getContainer()->getParameter(
+              'up_monit.project_id'
+            );
             $url = $this->getContainer()->getParameter('up_monit.url');
 
             $link = "$url/api/project/$project_id/$token";
 
             $client = new Client();
-            $r = $client->request('POST', $link, [
-              'body' => serialize($packages)
-            ]);
-            $a = 1;
+
+            try {
+                $r = $client->request(
+                  'POST',
+                  $link,
+                  [
+                    'body' => serialize($packages)
+                  ]
+                );
+                $code = $r->getStatusCode();
+            } catch (ClientErrorResponseException $e) {
+
+            }
+            //TODO: parse response
         }
     }
 }
