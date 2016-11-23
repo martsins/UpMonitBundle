@@ -20,16 +20,6 @@ class UpMonitStatusCommand extends ContainerAwareCommand
         $this
           // the name of the command (the part after "bin/console")
           ->setName('upmonit:check-status')
-          ->setDefinition(
-            [
-              new InputArgument(
-                'lockfile',
-                InputArgument::OPTIONAL,
-                'The path to the composer.lock file',
-                'composer.lock'
-              ),
-            ]
-          )
           // the short description shown while running "php bin/console list"
           ->setDescription('Send data.')
           // the full command description shown when running the command with
@@ -43,33 +33,31 @@ class UpMonitStatusCommand extends ContainerAwareCommand
         $response = new Response();
         /** @var UpMonitDataCollector $collection */
         $collection = $this->getContainer()->get('up_monit.data_collector');
-        $lockfile = $input->getArgument('lockfile');
-        $request->request->set('lockfile', $lockfile);
+
         $collection->collect($request, $response);
 
         $packages = $collection->getData();
         if (isset($packages['data']) && !empty($packages['data'])) {
             $token = $this->getContainer()->getParameter('up_monit.token');
-            $project_id = $this->getContainer()->getParameter(
-              'up_monit.project_id'
-            );
-            $url = $this->getContainer()->getParameter('up_monit.url');
 
-            $link = "$url/api/project/$project_id/$token";
-
-            $client = new Client();
-
-            try {
-                $r = $client->post(
-                  $link,
-                  ['Content-Type' => 'application/json'],
-                  json_encode($packages)
-                )->send();
-                $code = $r->getStatusCode();
-            } catch (ClientErrorResponseException $e) {
-
+            preg_match('/^(?:(.+):)?\/\/(?:(.+)(:.+)?@)?([\w\.-]+)(?::(\d+))?(\/.*)/i', $token, $match);
+            if (isset($match[1]) && isset($match[2]) && isset($match[4]) && isset($match[5])) {
+                $link = $match[1] . '/' . $match[4] . '/api/project' . $match[5] . '/' . $match[2];
             }
-            //TODO: parse response code
+
+            if (isset($link) && !empty($link)) {
+                $client = new Client();
+                try {
+                    $client->post(
+                      $link,
+                      ['Content-Type' => 'application/json'],
+                      json_encode($packages)
+                    )->send();
+                } catch (ClientErrorResponseException $e) {
+
+                }
+                //ToDo: parse response code
+            }
         }
     }
 }

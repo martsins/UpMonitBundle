@@ -44,8 +44,6 @@ class UpMonitDataCollector extends DataCollector
     ) {
         $client = new Client();
 
-        $lockfile = $request->request->get('lockfile');
-
         $rootDir = realpath($this->kernel->getRootDir() . '/../');
         $installed = json_decode(
           file_get_contents($rootDir . '/composer.lock')
@@ -55,7 +53,7 @@ class UpMonitDataCollector extends DataCollector
         );
         $require = (array) $require->require;
 
-        $vulnerabilities = $this->checker->check($lockfile);
+        $vulnerabilities = $this->checker->check('composer.lock');
 
         $data = [];
         foreach ($installed->packages as $installedPackage) {
@@ -85,7 +83,8 @@ class UpMonitDataCollector extends DataCollector
                   $require[$package]
                 );
                 foreach ($satisfied as $item) {
-                    if (Comparator::greaterThan(Version::normalize($item), $currentVersion)) {
+                    if (Comparator::greaterThan(Version::normalize($item), $currentVersion)
+                    ) {
                         $newVersion = Version::normalize($item);
                         break;
                     }

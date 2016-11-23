@@ -24,10 +24,6 @@ class Configuration implements ConfigurationInterface
           ->children()
           ->scalarNode('token')->cannotBeEmpty()
           ->end()
-          ->scalarNode('project_id')->cannotBeEmpty()
-          ->end()
-          ->scalarNode('url')->cannotBeEmpty()
-          ->end()
           ->end()
         ;
 

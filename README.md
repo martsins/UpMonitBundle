@@ -26,14 +26,10 @@ Add the UpMonitBundle to your application's kernel:
 
     up_monit:
         token: "%up_monit_token%"
-        project_id: "%up_monit_project_id%"
-        url: "%up_monit_url%"
 
 And add in parameters.yml
 
     up_monit_token: your_up_monit_server_token
-    up_monit_project_id: your_up_monit_server_project_id
-    up_monit_url: your_up_monit_server_url
 
 ## License
 

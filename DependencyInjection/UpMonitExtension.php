@@ -26,7 +26,5 @@ class UpMonitExtension extends Extension
         $loader->load('services.yml');
 
         $container->setParameter('up_monit.token', $config['token']);
-        $container->setParameter('up_monit.project_id', $config['project_id']);
-        $container->setParameter('up_monit.url', $config['url']);
     }
 }
