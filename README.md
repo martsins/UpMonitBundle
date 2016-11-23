@@ -2,19 +2,13 @@
 
 ## Installation
 
-Require the `nelmio/cors-bundle` package in your composer.json and update your dependencies.
+Require the `martsins/upmonitbundle` package in your composer.json and update your dependencies.
 
       "require" : {
         ....
         "martsins/upmonitbundle": "dev-master",
         ....
       }
-And add in composer.json
-    
-      "repositories" : [{
-          "type" : "vcs",
-          "url" : "https://github.com/martsins/UpMonitBundle.git"
-      }]
 
 Add the UpMonitBundle to your application's kernel:
 
