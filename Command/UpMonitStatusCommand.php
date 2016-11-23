@@ -41,8 +41,8 @@ class UpMonitStatusCommand extends ContainerAwareCommand
             $token = $this->getContainer()->getParameter('up_monit.token');
 
             preg_match('/^(?:(.+):)?\/\/(?:(.+)(:.+)?@)?([\w\.-]+)(?::(\d+))?(\/.*)/i', $token, $match);
-            if (isset($match[1]) && isset($match[2]) && isset($match[4]) && isset($match[5])) {
-                $link = $match[1] . '/' . $match[4] . '/api/project' . $match[5] . '/' . $match[2];
+            if (isset($match[1]) && isset($match[2]) && isset($match[4]) && isset($match[6])) {
+                $link = $match[1] . '://' . $match[4] . '/api/project' . $match[6] . '/' . $match[2];
             }
 
             if (isset($link) && !empty($link)) {
