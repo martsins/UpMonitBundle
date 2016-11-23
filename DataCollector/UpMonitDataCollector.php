@@ -87,12 +87,14 @@ class UpMonitDataCollector extends DataCollector
                 foreach ($satisfied as $item) {
                     if (Comparator::greaterThan($item, $currentVersion)) {
                         $newVersion = $item;
+                        break;
                     }
                 }
-                if (is_null($newVersion)) {
-                    $newStatus = 'compatibility breaks';
-                    $newVersion = Version::latest($versions);
-                }
+                //New version of package
+                //if (is_null($newVersion)) {
+                    //$newStatus = 'compatibility breaks';
+                    //$newVersion = Version::latest($versions);
+                //}
 
                 if ($currentVersion == $newVersion) {
                     continue;
