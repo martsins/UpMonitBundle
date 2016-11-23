@@ -60,18 +60,16 @@ class UpMonitStatusCommand extends ContainerAwareCommand
             $client = new Client();
 
             try {
-                $r = $client->request(
-                  'POST',
+                $r = $client->post(
                   $link,
-                  [
-                    'body' => serialize($packages)
-                  ]
-                );
+                  ['Content-Type' => 'application/json'],
+                  json_encode($packages)
+                )->send();
                 $code = $r->getStatusCode();
             } catch (ClientErrorResponseException $e) {
 
             }
-            //TODO: parse response
+            //TODO: parse response code
         }
     }
 }
