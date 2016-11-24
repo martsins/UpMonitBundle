@@ -17,7 +17,7 @@ use Composer\Semver\Comparator;
 class UpMonitDataCollector extends DataCollector
 {
 
-    const UP_MONET_HANDLER = 'symfony';
+    const UP_MONIT_HANDLER = 'symfony';
 
     private $kernel;
 
@@ -113,7 +113,7 @@ class UpMonitDataCollector extends DataCollector
             }
         }
 
-        $handler = self::UP_MONET_HANDLER;
+        $handler = self::UP_MONIT_HANDLER;
         $this->data = compact('handler', 'data');
     }
 

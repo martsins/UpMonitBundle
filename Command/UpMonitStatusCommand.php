@@ -4,6 +4,7 @@ namespace Martsins\UpMonitBundle\Command;
 
 use Guzzle\Http\Exception\ClientErrorResponseException;
 use Martsins\UpMonitBundle\DataCollector\UpMonitDataCollector;
+use Martsins\UpMonitBundle\Services\Helper\UpMonitHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -31,32 +32,17 @@ class UpMonitStatusCommand extends ContainerAwareCommand
     {
         $request = new Request();
         $response = new Response();
-        /** @var UpMonitDataCollector $collection */
-        $collection = $this->getContainer()->get('up_monit.data_collector');
 
-        $collection->collect($request, $response);
+        /** @var UpMonitHelper $helper */
+        $helper = $this->getContainer()->get('up_monit.helper');
+        if ($helper->checkToken()) {
+            /** @var UpMonitDataCollector $collection */
+            $collection = $this->getContainer()->get('up_monit.data_collector');
+            $collection->collect($request, $response);
 
-        $packages = $collection->getData();
-        if (isset($packages['data']) && !empty($packages['data'])) {
-            $token = $this->getContainer()->getParameter('up_monit.token');
-
-            preg_match('/^(?:(.+):)?\/\/(?:(.+)(:.+)?@)?([\w\.-]+)(?::(\d+))?(\/.*)/i', $token, $match);
-            if (isset($match[1]) && isset($match[2]) && isset($match[4]) && isset($match[6])) {
-                $link = $match[1] . '://' . $match[4] . '/api/project' . $match[6] . '/' . $match[2];
-            }
-
-            if (isset($link) && !empty($link)) {
-                $client = new Client();
-                try {
-                    $client->post(
-                      $link,
-                      ['Content-Type' => 'application/json'],
-                      json_encode($packages)
-                    )->send();
-                } catch (ClientErrorResponseException $e) {
-
-                }
-                //ToDo: parse response code
+            $packages = $collection->getData();
+            if (isset($packages['handler']) && !empty($packages['handler'])) {
+                $helper->sendData($packages);
             }
         }
     }
