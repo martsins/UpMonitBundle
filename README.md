@@ -2,6 +2,10 @@
 
 ## Installation
 
+    composer require martsins/upmonitbundle
+
+or
+
 Require the `martsins/upmonitbundle` package in your composer.json and update your dependencies.
 
       "require" : {
@@ -30,6 +34,10 @@ Add the UpMonitBundle to your application's kernel:
 And add in parameters.yml
 
     up_monit_token: your_up_monit_server_token
+
+## Command
+
+    php bin/console upmonit:check-status
 
 ## License
 
