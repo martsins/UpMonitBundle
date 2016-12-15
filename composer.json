@@ -1,8 +1,7 @@
 {
   "name" : "martsins/upmonitbundle",
   "description" : "UpMonit Bundle",
-  "version" : "1.0.0",
-  "type" : "symfony-bundle",
+  "type": "library",
   "homepage": "https://github.com/martsins/UpMonitBundle",
   "license" : "MIT",
   "keywords" : ["upmonit", "upmonit bundle"],
