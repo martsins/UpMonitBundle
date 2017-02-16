@@ -1,7 +1,6 @@
 <?php
 namespace Martsins\UpMonitBundle\DataCollector;
 
-use Guzzle\Http\Exception\ClientErrorResponseException;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -9,7 +8,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Martsins\UpMonitBundle\Model\Version;
 use Packagist\Api\Client;
 use SensioLabs\Security\SecurityChecker;
-use Composer\Semver\Comparator;
 
 /**
  * UpMonitDataCollector
@@ -42,7 +40,6 @@ class UpMonitDataCollector extends DataCollector
       Response $response,
       \Exception $exception = null
     ) {
-        $client = new Client();
 
         $rootDir = realpath($this->kernel->getRootDir() . '/../');
         $installed = json_decode(
@@ -53,8 +50,6 @@ class UpMonitDataCollector extends DataCollector
         );
         $require = (array) $require->require;
 
-        $vulnerabilities = $this->checker->check('composer.lock');
-
         $data = [];
         foreach ($installed->packages as $installedPackage) {
             $externalPackage = null;
@@ -64,54 +59,17 @@ class UpMonitDataCollector extends DataCollector
                 continue;
             }
 
-            $currentVersion = Version::normalize($installedPackage->version);
+            $version = Version::normalize($installedPackage->version);
             $url = $installedPackage->source->url;
             $description = $installedPackage->description;
-            $priority = isset($vulnerabilities[$package]) ? 'ture' : 'false';
 
-            try {
-                $externalPackage = $client->get($package);
-            } catch (ClientErrorResponseException $e) {
-
-            }
-
-            if (isset($externalPackage)) {
-                $newVersion = null;
-                $versions = Version::all($externalPackage);
-                $satisfied = Version::satisfiedBy(
-                  $versions,
-                  $require[$package]
-                );
-                foreach ($satisfied as $item) {
-                    if (Comparator::greaterThan(Version::normalize($item), $currentVersion)
-                    ) {
-                        $newVersion = Version::normalize($item);
-                        break;
-                    }
-                }
-
-                //New version of package
-                //if (is_null($newVersion)) {
-                //$newStatus = 'compatibility breaks';
-                //$newVersion = Version::latest($versions);
-                //}
-
-                if (is_null($newVersion) || $currentVersion == $newVersion) {
-                    continue;
-                }
-
-                $data[] = compact(
-                  'package',
-                  'currentVersion',
-                  'currentStatus',
-                  'newVersion',
-                  'newStatus',
-                  'url',
-                  'description',
-                  'priority'
-                );
-            }
-        }
+            $data[] = compact(
+              'package',
+              'version',
+              'url',
+              'description'
+            );
+         }
 
         $handler = self::UP_MONIT_HANDLER;
         $this->data = compact('handler', 'data');
